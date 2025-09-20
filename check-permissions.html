@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Sign In</title>
+  <title>Check permissions</title>
 </head>
 <body>
-  <h1>Sign In</h1>
+  <h1>Check Permissions</h1>
   <form id="signinForm">
     <label>
       Username:
@@ -17,15 +17,17 @@
   <p id="message"></p>
 
   <script>
+    const params = new URLSearchParams(window.location.search);
+    const globalid = params.get("id");
     document.getElementById("signinForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const username = document.getElementById("username").value;
 
       try {
-        const resp = await fetch("https://YOUR-FUNCTION-APP.azurewebsites.net/api/addtogroup", {
+        const resp = await fetch("https://create-user-api-afbag0hgagazdbb3.australiasoutheast-01.azurewebsites.net/api/check-permissions", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username })
+          body: JSON.stringify({ username, globalid })
         });
 
         const data = await resp.json();

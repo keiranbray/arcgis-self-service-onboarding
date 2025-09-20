@@ -11,7 +11,22 @@
 <body>
   <h1>Welcome</h1>
   <p>Please choose an option:</p>
-  <button onclick="window.location.href='check-permissions.html'">I already have an account</button>
-  <button onclick="window.location.href='signup.html'">Sign up for an account</button>
+  <button id="signinBtn">I already have an account</button>
+  <button id="signupBtn">Sign up for an account</button>
+
+    <script>
+    // Get id from query params
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
+    document.getElementById("signinBtn").addEventListener("click", () => {
+        window.location.href = "signin.html" + (id ? "?id=" + encodeURIComponent(id) : "");
+    });
+
+    document.getElementById("signupBtn").addEventListener("click", () => {
+        window.location.href = "signup.html" + (id ? "?id=" + encodeURIComponent(id) : "");
+    });
+    </script>
+
 </body>
 </html>

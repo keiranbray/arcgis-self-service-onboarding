@@ -19,6 +19,8 @@
   <p id="message"></p>
 
   <script>
+    const params = new URLSearchParams(window.location.search);
+    const globalid = params.get("id");
     document.getElementById("signupForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -35,10 +37,10 @@
       }
 
       try {
-        const resp = await fetch("https://YOUR-FUNCTION-APP.azurewebsites.net/api/signup", {
+        const resp = await fetch("https://create-user-api-afbag0hgagazdbb3.australiasoutheast-01.azurewebsites.net/api/signup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password, email, firstname, lastname })
+          body: JSON.stringify({ username, password, email, firstname, lastname, globalid })
         });
 
         const data = await resp.json();
