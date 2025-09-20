@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign In</title>
+</head>
+<body>
+  <h1>Sign In</h1>
+  <form id="signinForm">
+    <label>
+      Username:
+      <input type="text" id="username" required>
+    </label>
+    <button type="submit">Submit</button>
+  </form>
+
+  <p id="message"></p>
+
+  <script>
+    document.getElementById("signinForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const username = document.getElementById("username").value;
+
+      try {
+        const resp = await fetch("https://YOUR-FUNCTION-APP.azurewebsites.net/api/addtogroup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username })
+        });
+
+        const data = await resp.json();
+
+        if (resp.ok) {
+          window.location.href = data.redirect_uri;  // ✅ redirect on success
+        } else {
+          document.getElementById("message").innerText = data.message || "Error signing in";
+        }
+      } catch (err) {
+        document.getElementById("message").innerText = "Network error: " + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
