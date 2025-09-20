@@ -20,7 +20,7 @@
     const id = params.get("id");
 
     document.getElementById("signinBtn").addEventListener("click", () => {
-        window.location.href = "signin.html" + (id ? "?id=" + encodeURIComponent(id) : "");
+        window.location.href = "check-permissions.html" + (id ? "?id=" + encodeURIComponent(id) : "");
     });
 
     document.getElementById("signupBtn").addEventListener("click", () => {
