@@ -3,25 +3,65 @@
 <head>
   <meta charset="UTF-8">
   <title>Sign Up</title>
+  <!-- Load Calcite Components -->
+  <script type="module" src="https://js.arcgis.com/calcite-components/2.10.0/calcite.esm.js"></script>
+  <link rel="stylesheet" href="https://js.arcgis.com/calcite-components/2.10.0/calcite.css" />
 </head>
 <body>
-  <h1>Sign Up</h1>
-  <form id="signupForm">
-    <label>Username: <input type="text" id="username" required></label><br>
-    <label>Password: <input type="password" id="password" required></label><br>
-    <label>Confirm Password: <input type="password" id="password2" required></label><br>
-    <label>Email: <input type="email" id="email" required></label><br>
-    <label>Given Name: <input type="text" id="firstname" required></label><br>
-    <label>Family Name: <input type="text" id="lastname" required></label><br>
-    <button type="submit">Sign Up</button>
-  </form>
+  <main style="display:flex; justify-content:center; padding:2rem;">
+    <calcite-card style="max-width:400px; width:100%;">
+      <h1 style="text-align:center; margin-bottom:1rem;">Sign Up</h1>
 
-  <p id="message"></p>
+      <form id="signupForm">
+        <calcite-label>
+          Username
+          <calcite-input id="username" required></calcite-input>
+        </calcite-label>
+
+        <calcite-label>
+          Password
+          <calcite-input id="password" type="password" required></calcite-input>
+        </calcite-label>
+
+        <calcite-label>
+          Confirm Password
+          <calcite-input id="password2" type="password" required></calcite-input>
+        </calcite-label>
+
+        <calcite-label>
+          Email
+          <calcite-input id="email" type="email" required></calcite-input>
+        </calcite-label>
+
+        <calcite-label>
+          Given Name
+          <calcite-input id="firstname" required></calcite-input>
+        </calcite-label>
+
+        <calcite-label>
+          Family Name
+          <calcite-input id="lastname" required></calcite-input>
+        </calcite-label>
+
+        <calcite-button type="submit" width="full" scale="l" style="margin-top:1rem;">
+          Sign Up
+        </calcite-button>
+      </form>
+
+      <calcite-notice id="message" width="full" open style="display:none; margin-top:1rem;">
+        <div slot="message"></div>
+      </calcite-notice>
+    </calcite-card>
+  </main>
 
   <script>
     const params = new URLSearchParams(window.location.search);
     const globalid = params.get("id");
-    document.getElementById("signupForm").addEventListener("submit", async (e) => {
+
+    const form = document.getElementById("signupForm");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const username = document.getElementById("username").value;
@@ -32,7 +72,7 @@
       const family_name = document.getElementById("lastname").value;
 
       if (password !== password2) {
-        document.getElementById("message").innerText = "Passwords do not match.";
+        showMessage("Passwords do not match.", "danger");
         return;
       }
 
@@ -48,12 +88,18 @@
         if (resp.ok) {
           window.location.href = data.redirect_uri;  // ✅ redirect on success
         } else {
-          document.getElementById("message").innerText = data.message || "Error signing up";
+          showMessage(data.message || "Error signing up", "danger");
         }
       } catch (err) {
-        document.getElementById("message").innerText = "Network error: " + err.message;
+        showMessage("Network error: " + err.message, "danger");
       }
     });
+
+    function showMessage(text, kind) {
+      message.style.display = "block";
+      message.kind = kind; // "success", "danger", "info", etc.
+      message.querySelector("[slot=message]").innerText = text;
+    }
   </script>
 </body>
 </html>

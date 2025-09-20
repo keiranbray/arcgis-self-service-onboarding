@@ -2,31 +2,63 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>ArcGIS Account Portal</title>
-  <style>
-    body { font-family: sans-serif; text-align: center; margin-top: 50px; }
-    button { padding: 12px 20px; margin: 10px; font-size: 16px; cursor: pointer; }
-  </style>
+  <title>ArcGIS Setup</title>
+  <!-- Load Calcite Components -->
+  <script type="module" src="https://js.arcgis.com/calcite-components/2.10.0/calcite.esm.js"></script>
+  <link rel="stylesheet" href="https://js.arcgis.com/calcite-components/2.10.0/calcite.css" />
 </head>
 <body>
-  <h1>Welcome</h1>
-  <p>Please choose an option:</p>
-  <button id="signinBtn">I already have an account</button>
-  <button id="signupBtn">Sign up for an account</button>
+  <main style="display:flex; justify-content:center; padding:2rem;">
+    <calcite-card style="max-width:400px; width:100%;">
+      <h1 style="text-align:center; margin-bottom:1rem;">ArcGIS Setup</h1>
 
-    <script>
-    // Get id from query params
+      <form id="signinForm">
+        <calcite-label>
+          Username
+          <calcite-input id="username" required></calcite-input>
+        </calcite-label>
+
+        <calcite-button type="submit" width="full" scale="l" style="margin-top:1rem;">
+          Validate permissions
+        </calcite-button>
+      </form>
+
+      <calcite-notice id="message" width="full" open style="display:none; margin-top:1rem;">
+        <div slot="message"></div>
+      </calcite-notice>
+
+        <calcite-button appearance="outline" href="signup.html" width="full" scale="l" style="margin-top:1rem;">
+          Sign Up
+        </calcite-button>
+    </calcite-card>
+  </main>
+
+  <script>
+
     const params = new URLSearchParams(window.location.search);
-    const id = params.get("id");
+    const globalid = params.get("id");
+    document.getElementById("signinForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const username = document.getElementById("username").value;
 
-    document.getElementById("signinBtn").addEventListener("click", () => {
-        window.location.href = "check-permissions.html" + (id ? "?id=" + encodeURIComponent(id) : "");
+      try {
+        const resp = await fetch("https://create-user-api-afbag0hgagazdbb3.australiasoutheast-01.azurewebsites.net/api/check-permissions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, globalid })
+        });
+
+        const data = await resp.json();
+
+        if (resp.ok) {
+          window.location.href = data.redirect_uri;  // ✅ redirect on success
+        } else {
+          document.getElementById("message").innerText = data.message || "Error signing in";
+        }
+      } catch (err) {
+        document.getElementById("message").innerText = "Network error: " + err.message;
+      }
     });
-
-    document.getElementById("signupBtn").addEventListener("click", () => {
-        window.location.href = "signup.html" + (id ? "?id=" + encodeURIComponent(id) : "");
-    });
-    </script>
-
+  </script>
 </body>
 </html>
