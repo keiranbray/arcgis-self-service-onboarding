@@ -28,8 +28,8 @@
       const password = document.getElementById("password").value;
       const password2 = document.getElementById("password2").value;
       const email = document.getElementById("email").value;
-      const firstname = document.getElementById("firstname").value;
-      const lastname = document.getElementById("lastname").value;
+      const given_name = document.getElementById("firstname").value;
+      const family_name = document.getElementById("lastname").value;
 
       if (password !== password2) {
         document.getElementById("message").innerText = "Passwords do not match.";
@@ -40,7 +40,7 @@
         const resp = await fetch("https://create-user-api-afbag0hgagazdbb3.australiasoutheast-01.azurewebsites.net/api/signup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password, email, firstname, lastname, globalid })
+          body: JSON.stringify({ username, password, email, given_name, family_name, globalid })
         });
 
         const data = await resp.json();
