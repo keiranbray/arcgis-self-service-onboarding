@@ -1,61 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>ArcGIS Setup</title>
-  <!-- Load Calcite Components -->
-  <script type="module" src="https://js.arcgis.com/calcite-components/2.10.0/calcite.esm.js"></script>
-  <link rel="stylesheet" href="https://js.arcgis.com/calcite-components/2.10.0/calcite.css" />
-<style>
-  /* Make the main container flexible */
-main {
-  display: flex;
-  justify-content: center;
-  padding: 2rem;
-}
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Calcite Loading Spinner + Message</title>
 
-/* Make the card responsive */
-calcite-card {
-  max-width: 400px;   /* limits width on desktop */
-  width: 100%;        /* full width on mobile */
-}
+  <!-- Calcite Components (ES modules + stylesheet from UNPKG) -->
+  <link rel="stylesheet" href="https://unpkg.com/@esri/calcite-components/dist/calcite/calcite.css" />
+  <script type="module" src="https://unpkg.com/@esri/calcite-components/dist/calcite/calcite.esm.js"></script>
 
-/* Adjust font sizes on small screens */
-@media (max-width: 480px) {
-  h1 {
-    font-size: 1.5rem;
-  }
+  <style>
+    /* Simple centered container that works on mobile and desktop */
+    :root {
+      --bg: #ffffff;
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: var(--bg);
+      color: #1e1e1e;
+    }
 
-  calcite-input,
-  calcite-button {
-    font-size: 0.9rem;
-  }
+    .loading-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      box-sizing: border-box;
+    }
 
-  form {
-    padding: 1rem;
-  }
-}
+    .loader-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1.25rem 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(16, 24, 40, 0.08);
+      background: white;
+      text-align: center;
+      max-width: 420px;
+      width: 100%;
+    }
 
-/* Optional: stack elements with spacing for very small screens */
-@media (max-width: 360px) {
-  form calcite-label {
-    margin-bottom: 0.75rem;
-  }
+    /* message styling (you control content via JS) */
+    .loading-message {
+      font-size: 1rem;
+      line-height: 1.3;
+      color: #344054;
+      min-height: 1.2em; /* keeps layout stable if message is empty */
+    }
 
-  calcite-button {
-    padding: 0.6rem;
-  }
-}
+    /* optional small hint text */
+    .loading-hint {
+      font-size: 0.85rem;
+      color: #6b7280;
+    }
 
-</style>
-
+    /* responsiveness */
+    @media (max-width: 420px) {
+      .loader-card { padding: 1rem; }
+      .loading-message { font-size: 0.95rem; }
+    }
+  </style>
 </head>
+
+
 <body>
-  
-  Loading...
+  <div class="loading-wrap" id="calcite-spinner-root" role="status" aria-live="polite">
+    <div class="loader-card" id="loaderCard">
+      <!-- Calcite loader component (indeterminate spinner) -->
+      <!-- you can toggle `active` attribute with JS to start/stop the spinner -->
+      <calcite-loader id="calciteLoader" active type="indeterminate" size="l" aria-label="Loading"></calcite-loader>
+
+      <!-- Message you control through JS -->
+      <div id="loadingMessage" class="loading-message">Loading…</div>
+
+      <!-- Optional hint smaller text -->
+      <div id="loadingHint" class="loading-hint" hidden>Tip: this may take a few seconds.</div>
+    </div>
+  </div>
 
     <script>
+
+    // Public API to control the loader + message
+    const calciteLoader = document.getElementById("calciteLoader");
+    const loadingMessage = document.getElementById("loadingMessage");
+    const loadingRoot = document.getElementById("calcite-spinner-root");
+    const loadingHint = document.getElementById("loadingHint");
+    const loaderCard = document.getElementById("loaderCard");
+
+    /**
+     * Set the visible message under the spinner.
+     * @param {string} text - The text to show. Can contain simple HTML if needed.
+     */
+    function setLoadingMessage(text) {
+      // If you want plain-text only, escape user input here.
+      loadingMessage.innerHTML = text ?? "";
+    }
+
+    /**
+     * Show or hide the loading spinner area.
+     * @param {boolean} visible
+     */
+    function setLoadingVisible(visible) {
+      if (visible) {
+        loadingRoot.style.display = "flex";
+        // ensure the calcite loader is active
+        calciteLoader.setAttribute("active", "");
+      } else {
+        loadingRoot.style.display = "none";
+        calciteLoader.removeAttribute("active");
+      }
+    }
+
+    /**
+     * Toggle the small hint under the message.
+     * @param {boolean} show
+     */
+    function showHint(show) {
+      loadingHint.hidden = !show;
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
+
+      // Export functions to window so you can call them from other scripts
+      window.setLoadingMessage = setLoadingMessage;
+      window.setLoadingVisible = setLoadingVisible;
+      window.showLoadingHint = showHint;
+
+      // Example usage: change the message after 1.5s, then hide after 5s
+      // Remove or edit these for your real app
+      setTimeout(() => setLoadingMessage("Validating user details"), 200);
+      setTimeout(() => setLoadingMessage("Checking licence details"), 4000);
+      setTimeout(() => setLoadingMessage("Adding user to group"), 7000);
+
+
       const params = new URLSearchParams(window.location.search);
       const code = params.get("code");
       const verifier = localStorage.getItem("pkce_verifier");
@@ -74,14 +156,26 @@ calcite-card {
         if (ok) {
           window.location.href = data.redirect_uri;
         } else {
-          showMessage(data.message || "Error signing in", "danger");
+          window.setLoadingVisible(false);
+          setLoadingMessage(data.message || "Error signing in", "danger");
         }
       })
       .catch(err => {
-        showMessage("Network error: " + err.message, "danger");
+        window.setLoadingVisible(false);
+        setLoadingMessage("Network error: " + err.message, "danger");
       });
     });
     </script>
 
+</body>
+</html>
+
+
+
+
+
+  <script>
+    
+  </script>
 </body>
 </html>
