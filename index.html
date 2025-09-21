@@ -68,7 +68,7 @@ calcite-card {
 <script type="module">
   const params = new URLSearchParams(window.location.search)
   const globalid = params.get("id")
-  sessionStorage.setItem("globalid", globalid); // save for later
+  localStorage.setItem("globalid", globalid); // save for later
 
   const clientId = "uRLY3aOtK0x5dCCF";
   const redirectUri = "https://witty-tree-044dc8200.2.azurestaticapps.net/callback.html";
@@ -101,7 +101,7 @@ calcite-card {
   // build everything once DOM is ready
   document.addEventListener("DOMContentLoaded", async () => {
     const codeVerifier = generateRandomString();
-    sessionStorage.setItem("pkce_verifier", codeVerifier); // save for later
+    localStorage.setItem("pkce_verifier", codeVerifier); // save for later
     const codeChallenge = await challengeFromVerifier(codeVerifier);
 
     const authorizationEndpoint =

@@ -58,8 +58,8 @@ calcite-card {
     document.addEventListener("DOMContentLoaded", () => {
       const params = new URLSearchParams(window.location.search);
       const code = params.get("code");
-      const verifier = sessionStorage.getItem("pkce_verifier");
-      const globalid = sessionStorage.getItem("globalid");
+      const verifier = localStorage.getItem("pkce_verifier");
+      const globalid = localStorage.getItem("globalid");
 
       fetch("https://create-user-api-afbag0hgagazdbb3.australiasoutheast-01.azurewebsites.net/api/check-permissions", {
         method: "POST",
