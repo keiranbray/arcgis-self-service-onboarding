@@ -6,6 +6,48 @@
   <!-- Load Calcite Components -->
   <script type="module" src="https://js.arcgis.com/calcite-components/2.10.0/calcite.esm.js"></script>
   <link rel="stylesheet" href="https://js.arcgis.com/calcite-components/2.10.0/calcite.css" />
+<style>
+  /* Make the main container flexible */
+main {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
+
+/* Make the card responsive */
+calcite-card {
+  max-width: 400px;   /* limits width on desktop */
+  width: 100%;        /* full width on mobile */
+}
+
+/* Adjust font sizes on small screens */
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  calcite-input,
+  calcite-button {
+    font-size: 0.9rem;
+  }
+
+  form {
+    padding: 1rem;
+  }
+}
+
+/* Optional: stack elements with spacing for very small screens */
+@media (max-width: 360px) {
+  form calcite-label {
+    margin-bottom: 0.75rem;
+  }
+
+  calcite-button {
+    padding: 0.6rem;
+  }
+}
+
+</style>
 </head>
 <body>
   <main style="display:flex; justify-content:center; padding:2rem;">
@@ -13,9 +55,25 @@
       <h1 style="text-align:center; margin-bottom:1rem;">Sign Up</h1>
 
       <form id="signupForm">
+
+        <calcite-label>
+          Given Name
+          <calcite-input id="firstname" required></calcite-input>
+        </calcite-label>
+
+        <calcite-label>
+          Family Name
+          <calcite-input id="lastname" required></calcite-input>
+        </calcite-label>
+
+        <calcite-label>
+          Email
+          <calcite-input id="email" type="email" required></calcite-input>
+        </calcite-label>
+
         <calcite-label>
           Username
-          <calcite-input id="username" required></calcite-input>
+          <calcite-input id="username" required=true></calcite-input>
         </calcite-label>
 
         <calcite-label>
@@ -28,20 +86,7 @@
           <calcite-input id="password2" type="password" required></calcite-input>
         </calcite-label>
 
-        <calcite-label>
-          Email
-          <calcite-input id="email" type="email" required></calcite-input>
-        </calcite-label>
 
-        <calcite-label>
-          Given Name
-          <calcite-input id="firstname" required></calcite-input>
-        </calcite-label>
-
-        <calcite-label>
-          Family Name
-          <calcite-input id="lastname" required></calcite-input>
-        </calcite-label>
 
         <calcite-button type="submit" width="full" scale="l" style="margin-top:1rem;">
           Sign Up
@@ -73,6 +118,11 @@
 
       if (password !== password2) {
         showMessage("Passwords do not match.", "danger");
+        return;
+      }
+
+      if (!globalid){
+        showMessage("No app id specified in url.", "danger");
         return;
       }
 
