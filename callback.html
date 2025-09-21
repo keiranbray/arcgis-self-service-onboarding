@@ -61,6 +61,9 @@ calcite-card {
       const verifier = localStorage.getItem("pkce_verifier");
       const globalid = localStorage.getItem("globalid");
 
+      localStorage.removeItem("pkce_verifier")
+      localStorage.removeItem("globalid")
+
       fetch("https://create-user-api-afbag0hgagazdbb3.australiasoutheast-01.azurewebsites.net/api/check-permissions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
