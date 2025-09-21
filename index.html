@@ -55,20 +55,9 @@ calcite-card {
     <calcite-card style="max-width:400px; width:100%;">
       <h1 style="text-align:center; margin-bottom:1rem;">ArcGIS Setup</h1>
 
-      <form id="signinForm">
-        <calcite-label>
-          Username
-          <calcite-input id="username" required></calcite-input>
-        </calcite-label>
-
-        <calcite-button type="submit" width="full" scale="l" style="margin-top:1rem;">
-          Validate permissions
+        <calcite-button id="btn-signin" width="full" scale="l" style="margin-top:1rem;">
+          Sign in
         </calcite-button>
-      </form>
-
-      <calcite-notice id="message" width="full" open style="display:none; margin-top:1rem;">
-        <div slot="message"></div>
-      </calcite-notice>
 
         <calcite-button appearance="outline" href="signup.html" width="full" scale="l" style="margin-top:1rem;">
           Sign Up
@@ -76,47 +65,64 @@ calcite-card {
     </calcite-card>
   </main>
 
-  <script>
+<script type="module">
+  const params = new URLSearchParams(window.location.search)
+  const globalid = params.get("id")
+  sessionStorage.setItem("globalid", globalid); // save for later
 
-    const params = new URLSearchParams(window.location.search);
-    const globalid = params.get("id");
+  const clientId = "uRLY3aOtK0x5dCCF";
+  const redirectUri = "https://witty-tree-044dc8200.2.azurestaticapps.net/callback.html";
 
+  const dec2hex = (dec) => {
+    return ("0" + dec.toString(16)).substr(-2);
+  };
 
+  const generateRandomString = () => {
+    const array = new Uint8Array(32); // 32 bytes = 256 bits
+    window.crypto.getRandomValues(array);
+    return Array.from(array, dec2hex).join("");
+  };
 
-    document.getElementById("signinForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const username = document.getElementById("username").value;
-
-      if (globalid === null) {
-        showMessage("No app id specified in url", "danger")
-        return
-      }
-
-      try {
-        const resp = await fetch("https://create-user-api-afbag0hgagazdbb3.australiasoutheast-01.azurewebsites.net/api/check-permissions", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, globalid })
-        });
-
-        const data = await resp.json();
-
-        if (resp.ok) {
-          window.location.href = data.redirect_uri;  // ✅ redirect on success
-        } else {
-          showMessage(data.message || "Error signing in", "danger")
-        }
-      } catch (err) {
-        showMessage("Network error: " + err.message, "danger")
-      }
-    });
-
-    function showMessage(text, kind) {
-      message.style.display = "block";
-      message.kind = kind; // "success", "danger", "info", etc.
-      message.querySelector("[slot=message]").innerText = text;
+  const challengeFromVerifier = async (verifier) => {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(verifier);
+    const sha256 = await window.crypto.subtle.digest("SHA-256", data);
+    const bytes = new Uint8Array(sha256);
+    let str = "";
+    for (let i = 0; i < bytes.byteLength; i++) {
+      str += String.fromCharCode(bytes[i]);
     }
+    return btoa(str)
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/, "");
+  };
 
-  </script>
+  // build everything once DOM is ready
+  document.addEventListener("DOMContentLoaded", async () => {
+    const codeVerifier = generateRandomString();
+    sessionStorage.setItem("pkce_verifier", codeVerifier); // save for later
+    const codeChallenge = await challengeFromVerifier(codeVerifier);
+
+    const authorizationEndpoint =
+      "https://www.arcgis.com/sharing/rest/oauth2/authorize" +
+      "?client_id=" + encodeURIComponent(clientId) +
+      "&code_challenge=" + encodeURIComponent(codeChallenge) +
+      "&code_challenge_method=S256" +
+      "&redirect_uri=" + encodeURIComponent(redirectUri) +
+      "&response_type=code" +
+      "&expiration=20160";
+
+    const signInButton = document.getElementById("btn-signin");
+    signInButton.addEventListener("click", () => {
+      window.open(
+        authorizationEndpoint,
+        "oauth-window",
+        "height=400,width=600,menubar=no,location=yes,resizable=yes,scrollbars=yes,status=yes"
+      );
+    });
+  });
+</script>
+
 </body>
 </html>

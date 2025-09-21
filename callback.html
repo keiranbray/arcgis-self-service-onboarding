@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ArcGIS Setup</title>
+  <!-- Load Calcite Components -->
+  <script type="module" src="https://js.arcgis.com/calcite-components/2.10.0/calcite.esm.js"></script>
+  <link rel="stylesheet" href="https://js.arcgis.com/calcite-components/2.10.0/calcite.css" />
+<style>
+  /* Make the main container flexible */
+main {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
+
+/* Make the card responsive */
+calcite-card {
+  max-width: 400px;   /* limits width on desktop */
+  width: 100%;        /* full width on mobile */
+}
+
+/* Adjust font sizes on small screens */
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  calcite-input,
+  calcite-button {
+    font-size: 0.9rem;
+  }
+
+  form {
+    padding: 1rem;
+  }
+}
+
+/* Optional: stack elements with spacing for very small screens */
+@media (max-width: 360px) {
+  form calcite-label {
+    margin-bottom: 0.75rem;
+  }
+
+  calcite-button {
+    padding: 0.6rem;
+  }
+}
+
+</style>
+
+</head>
+<body>
+  
+  Loading...
+
+  <script>
+
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+    const verifier = sessionStorage.getItem("pkce_verifier");
+    const globalid = sessionStorage.getItem("globalid");
+
+    fetch("https://create-user-api-afbag0hgagazdbb3.australiasoutheast-01.azurewebsites.net/api/check-permissions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code, verifier, globalid })
+    })
+    .then(res => res.json().then(data => ({ ok: res.ok, data })))
+    .then(({ ok, data }) => {
+      if (ok) {
+        window.location.href = data.redirect_uri;  // ✅ redirect on success
+      } else {
+        showMessage(data.message || "Error signing in", "danger");
+      }
+    })
+    .catch(err => {
+      showMessage("Network error: " + err.message, "danger");
+    });
+
+
+  </script>
+</body>
+</html>
