@@ -115,11 +115,8 @@ calcite-card {
 
     const signInButton = document.getElementById("btn-signin");
     signInButton.addEventListener("click", () => {
-      window.open(
-        authorizationEndpoint,
-        "oauth-window",
-        "height=400,width=600,menubar=no,location=yes,resizable=yes,scrollbars=yes,status=yes"
-      );
+      window.location.href=authorizationEndpoint
+        
     });
   });
 </script>
