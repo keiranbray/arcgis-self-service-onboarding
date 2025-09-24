@@ -88,8 +88,8 @@ calcite-card {
 
 
 
-        <calcite-button type="submit" width="full" scale="l" style="margin-top:1rem;">
-          Sign Up
+        <calcite-button id="submitBtn" type="submit" width="full" scale="l" style="margin-top:1rem;">
+          Sign up
         </calcite-button>
       </form>
 
@@ -108,6 +108,13 @@ calcite-card {
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
+
+      // Get the button
+      const btn = document.getElementById("submitBtn");
+      // Disable the button
+      btn.disabled = true;
+      // Change the text
+      btn.textContent = "Processing...";
 
       const username = document.getElementById("username").value;
       const password = document.getElementById("password").value;
@@ -139,9 +146,13 @@ calcite-card {
           window.location.href = data.redirect_uri;  // ✅ redirect on success
         } else {
           showMessage(data.message || "Error signing up", "danger");
+          btn.disabled = false
+          btn.textContent = "Sign up"
         }
       } catch (err) {
         showMessage("Network error: " + err.message, "danger");
+        btn.disabled = false
+        btn.textContent = "Sign up"
       }
     });
 
