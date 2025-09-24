@@ -62,13 +62,13 @@ calcite-card {
         <calcite-button appearance="outline" href="signup.html" width="full" scale="l" style="margin-top:1rem;">
           Sign up
         </calcite-button>
+      <calcite-notice id="message" width="full" open style="display:none; margin-top:1rem;">
+        <div slot="message"></div>
+      </calcite-notice>
     </calcite-card>
   </main>
 
 <script type="module">
-  const params = new URLSearchParams(window.location.search)
-  const globalid = params.get("id")
-  localStorage.setItem("globalid", globalid); // save for later
 
   const clientId = "uRLY3aOtK0x5dCCF";
   const redirectUri = "https://witty-tree-044dc8200.2.azurestaticapps.net/callback.html";
@@ -116,9 +116,23 @@ calcite-card {
     const signInButton = document.getElementById("btn-signin");
     signInButton.addEventListener("click", () => {
       window.location.href=authorizationEndpoint
-        
     });
+
+    const params = new URLSearchParams(window.location.search)
+    const globalid = params.get("id")
+    if (globalid === null){
+      showMessage("No app id provided in url", "danger")
+    }
+    localStorage.setItem("globalid", globalid); // save for later
+
   });
+
+    function showMessage(text, kind) {
+      message.style.display = "block";
+      message.kind = kind; // "success", "danger", "info", etc.
+      message.querySelector("[slot=message]").innerText = text;
+    }
+
 </script>
 
 </body>
