@@ -59,7 +59,7 @@ calcite-card {
           Sign in
         </calcite-button>
 
-        <calcite-button appearance="outline" href="signup.html" width="full" scale="l" style="margin-top:1rem;">
+        <calcite-button id="btn-signup" appearance="outline" href="signup.html" width="full" scale="l" style="margin-top:1rem;">
           Sign up
         </calcite-button>
       <calcite-notice id="message" width="full" open style="display:none; margin-top:1rem;">
@@ -120,8 +120,11 @@ calcite-card {
 
     const params = new URLSearchParams(window.location.search)
     const globalid = params.get("id")
-    if (globalid === null){
-      showMessage("No app id provided in url", "danger")
+    if (globalid === null || globalid.length() !== 36){
+      showMessage("Invalid app id in url", "danger")
+      signInButton.disabled = true
+      const signUpButton = document.getElementById("btn-signup");
+      signUpButton.disabled = true
     }
     localStorage.setItem("globalid", globalid); // save for later
 
