@@ -120,7 +120,7 @@ calcite-card {
 
     const params = new URLSearchParams(window.location.search)
     const globalid = params.get("id")
-    if (globalid === null || globalid.length() !== 36){
+    if (globalid === null || globalid.length() != 36){
       showMessage("Invalid app id in url", "danger")
       signInButton.disabled = true
       const signUpButton = document.getElementById("btn-signup");
