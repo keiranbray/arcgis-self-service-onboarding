@@ -125,6 +125,8 @@ calcite-card {
 
       if (password !== password2) {
         showMessage("Passwords do not match.", "danger");
+        btn.textContent = "Sign up";
+        btn.disabled = false;
         return;
       }
 
@@ -146,14 +148,12 @@ calcite-card {
           window.location.href = data.redirect_uri;  // ✅ redirect on success
         } else {
           showMessage(data.message || "Error signing up", "danger");
-          btn.disabled = false
-          btn.textContent = "Sign up"
         }
       } catch (err) {
         showMessage("Network error: " + err.message, "danger");
-        btn.disabled = false
-        btn.textContent = "Sign up"
       }
+      btn.textContent = "Sign up";
+      btn.disabled = false;
     });
 
     function showMessage(text, kind) {
