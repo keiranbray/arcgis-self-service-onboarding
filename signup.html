@@ -130,10 +130,25 @@ calcite-card {
         return;
       }
 
+      if (!isValidPassword(password)) {
+        showMessage("Passwords must have 12 characters including at least 1 uppercase, lowercase, number and symbol.", "danger");
+        btn.textContent = "Sign up";
+        btn.disabled = false;
+        return;
+      }
+
       if (!globalid){
         showMessage("No app id specified in url.", "danger");
         return;
       }
+
+      if (!isValidEmail(email)) {
+        showMessage("Email address doesn't appear to be correct", "danger");
+        btn.textContent = "Sign up";
+        btn.disabled = false;
+        return;
+      }
+
 
       try {
         const resp = await fetch("https://create-user-api-afbag0hgagazdbb3.australiasoutheast-01.azurewebsites.net/api/signup", {
@@ -161,6 +176,19 @@ calcite-card {
       message.kind = kind; // "success", "danger", "info", etc.
       message.querySelector("[slot=message]").innerText = text;
     }
+
+    function isValidEmail(email) {
+      // Very basic: some text, an @, some text, a dot, some text
+      const regex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+      return regex.test(email);
+    }
+
+    function isValidPassword(password) {
+      // At least 12 chars, contains lowercase, uppercase, number, and symbol
+      const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{12,}$/;
+      return regex.test(password);
+    }
+
   </script>
 </body>
 </html>
