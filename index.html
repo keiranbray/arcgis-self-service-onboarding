@@ -122,8 +122,8 @@ calcite-card {
 
     const params = new URLSearchParams(window.location.search)
     const globalid = params.get("id")
-    
-    signInButton.addEventListener("click", () => {
+
+    signUpButton.addEventListener("click", () => {
       window.location.ref = "signup.html?id="+globalid
     })
     if (globalid === null || globalid.length !== 36){
