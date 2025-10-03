@@ -59,6 +59,12 @@
       color: #6b7280;
     }
 
+    .loading-error {
+      font-size: 2rem;
+      color: red;
+      margin: 1rem 0;
+    }
+
     /* responsiveness */
     @media (max-width: 420px) {
       .loader-card { padding: 1rem; }
@@ -77,6 +83,10 @@
 
       <!-- Message you control through JS -->
       <div id="loadingMessage" class="loading-message">Loading…</div>
+
+      <div id="loadingError" class="loading-error" hidden>
+      ❌
+      </div>
 
       <!-- Optional hint smaller text -->
       <div id="loadingHint" class="loading-hint" hidden>Tip: this may take a few seconds.</div>
@@ -108,8 +118,11 @@
     function setLoadingVisible(visible) {
       if (visible) {
         loadingRoot.style.display = "flex";
-        // ensure the calcite loader is active
+        calciteLoader.removeAttribute("hidden");
         calciteLoader.setAttribute("active", "");
+        loadingError.hidden = true;
+        loadingMessage.textContent = "Loading…";
+        loadingHint.hidden = false;
       } else {
         loadingRoot.style.display = "none";
         calciteLoader.removeAttribute("active");
@@ -124,6 +137,21 @@
       loadingHint.hidden = !show;
     }
 
+    function setLoadingError() {
+      // Show container
+      loadingRoot.style.display = "flex";
+      
+      // Hide spinner
+      calciteLoader.removeAttribute("active");
+      calciteLoader.setAttribute("hidden", "");
+      
+      // Show error ❌
+      loadingError.hidden = false;
+
+      // Remove hint
+      loadingHint.hidden = true;
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
 
       // Export functions to window so you can call them from other scripts
@@ -134,8 +162,8 @@
       // Example usage: change the message after 1.5s, then hide after 5s
       // Remove or edit these for your real app
       setTimeout(() => setLoadingMessage("Validating user details"), 3000);
-      setTimeout(() => setLoadingMessage("Checking licence details"), 6000);
-      setTimeout(() => setLoadingMessage("Adding user to group"), 9000);
+      setTimeout(() => setLoadingMessage("Gathering app details"), 7000);
+      setTimeout(() => setLoadingMessage("Adding user to group"), 10000);
 
 
       const params = new URLSearchParams(window.location.search);
@@ -161,7 +189,7 @@
         }
       })
       .catch(err => {
-        window.setLoadingVisible(false);
+        window.setLoadingError();
         setLoadingMessage("Network error: " + err.message, "danger");
       });
     });
