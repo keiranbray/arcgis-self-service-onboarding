@@ -130,23 +130,27 @@ calcite-card {
         return;
       }
 
-      if (!isValidPassword(password)) {
+      else if (!isValidPassword(password)) {
         showMessage("Passwords must have 12 characters including at least 1 uppercase, lowercase, number and symbol.", "danger");
         btn.textContent = "Sign up";
         btn.disabled = false;
         return;
-      }
+      } 
 
-      if (!globalid){
+      else if (!globalid){
         showMessage("No app id specified in url.", "danger");
         return;
       }
 
-      if (!isValidEmail(email)) {
+      else if (!isValidEmail(email)) {
         showMessage("Email address doesn't appear to be correct", "danger");
         btn.textContent = "Sign up";
         btn.disabled = false;
         return;
+      }
+
+      else {
+        showMessage("Inputs are valid", "info")
       }
 
 
