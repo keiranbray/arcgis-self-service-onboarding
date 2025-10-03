@@ -124,7 +124,7 @@ calcite-card {
     const globalid = params.get("id")
 
     signUpButton.addEventListener("click", () => {
-      window.location.ref = "signup.html?id="+globalid
+      window.location.href = "signup.html?id="+globalid
     })
     if (globalid === null || globalid.length !== 36){
       showMessage("Invalid app id in url", "danger")
