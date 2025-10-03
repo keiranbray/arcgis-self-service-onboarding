@@ -80,14 +80,11 @@
       <!-- Calcite loader component (indeterminate spinner) -->
       <!-- you can toggle `active` attribute with JS to start/stop the spinner -->
       <calcite-loader id="calciteLoader" active type="indeterminate" size="l" aria-label="Loading"></calcite-loader>
-
-      <!-- Message you control through JS -->
-      <div id="loadingMessage" class="loading-message">Loading…</div>
-
       <div id="loadingError" class="loading-error" hidden>
       ❌
       </div>
-
+      <!-- Message you control through JS -->
+      <div id="loadingMessage" class="loading-message">Loading…</div>
       <!-- Optional hint smaller text -->
       <div id="loadingHint" class="loading-hint" hidden>Tip: this may take a few seconds.</div>
     </div>
@@ -115,14 +112,22 @@
      * Show or hide the loading spinner area.
      * @param {boolean} visible
      */
-    function setLoadingVisible(visible) {
+    function setLoadingVisible(visible, error=false) {
       if (visible) {
-        loadingRoot.style.display = "flex";
-        calciteLoader.removeAttribute("hidden");
-        calciteLoader.setAttribute("active", "");
-        loadingError.hidden = true;
-        loadingMessage.textContent = "Loading…";
-        loadingHint.hidden = false;
+        if (!error){
+          loadingRoot.style.display = "flex";
+          calciteLoader.removeAttribute("hidden");
+          calciteLoader.setAttribute("active", "");
+          loadingError.hidden = true;
+          loadingMessage.textContent = "Loading…";
+          loadingHint.hidden = false;
+        } else {
+          loadingRoot.style.display = "flex";
+          calciteLoader.setAttribute("hidden", "");
+          loadingError.hidden = false;
+          loadingMessage.textContent = "An error has occurred";
+          loadingHint.hidden = true;        
+        }
       } else {
         loadingRoot.style.display = "none";
         calciteLoader.removeAttribute("active");
@@ -135,21 +140,6 @@
      */
     function showHint(show) {
       loadingHint.hidden = !show;
-    }
-
-    function setLoadingError() {
-      // Show container
-      loadingRoot.style.display = "flex";
-      
-      // Hide spinner
-      calciteLoader.removeAttribute("active");
-      calciteLoader.setAttribute("hidden", "");
-      
-      // Show error ❌
-      loadingError.hidden = false;
-
-      // Remove hint
-      loadingHint.hidden = true;
     }
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -184,12 +174,12 @@
         if (ok) {
           window.location.href = data.redirect_uri;
         } else {
-          window.setLoadingVisible(false);
+          window.setLoadingVisible(true, true);
           setLoadingMessage(data.message || "Error signing in", "danger");
         }
       })
       .catch(err => {
-        window.setLoadingError();
+        window.setLoadingVisible(true, true);
         setLoadingMessage("Network error: " + err.message, "danger");
       });
     });
