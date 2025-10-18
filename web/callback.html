@@ -151,10 +151,11 @@
 
       // Example usage: change the message after 1.5s, then hide after 5s
       // Remove or edit these for your real app
-      setTimeout(() => setLoadingMessage("Validating user details"), 3000);
-      setTimeout(() => setLoadingMessage("Gathering app details"), 7000);
-      setTimeout(() => setLoadingMessage("Adding user to group"), 10000);
+      const timeouts = [];
 
+      timeouts.push(setTimeout(() => setLoadingMessage("Validating user details"), 3000));
+      timeouts.push(setTimeout(() => setLoadingMessage("Gathering app details"), 7000));
+      timeouts.push(setTimeout(() => setLoadingMessage("Adding user to group"), 10000));
 
       const params = new URLSearchParams(window.location.search);
       const code = params.get("code");
@@ -164,7 +165,7 @@
       localStorage.removeItem("pkce_verifier")
       localStorage.removeItem("globalid")
 
-      fetch("https://create-user-api-afbag0hgagazdbb3.australiasoutheast-01.azurewebsites.net/api/check-permissions", {
+      fetch("/api/check-permissions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code, verifier, globalid })
@@ -174,11 +175,13 @@
         if (ok) {
           window.location.href = data.redirect_uri;
         } else {
+          timeouts.forEach(clearTimeout);
           window.setLoadingVisible(true, true);
           setLoadingMessage(data.message || "Error signing in", "danger");
         }
       })
       .catch(err => {
+        timeouts.forEach(clearTimeout);
         window.setLoadingVisible(true, true);
         setLoadingMessage("Network error: " + err.message, "danger");
       });

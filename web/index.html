@@ -71,8 +71,8 @@ calcite-card {
 
 <script type="module">
 
-  const clientId = "uRLY3aOtK0x5dCCF";
-  const redirectUri = "https://witty-tree-044dc8200.2.azurestaticapps.net/callback.html";
+  const clientId = "__CLIENT_ID__";
+  const redirectUri = "__CALLBACK_URL__";
 
   const dec2hex = (dec) => {
     return ("0" + dec.toString(16)).substr(-2);
@@ -106,7 +106,7 @@ calcite-card {
     const codeChallenge = await challengeFromVerifier(codeVerifier);
 
     const authorizationEndpoint =
-      "https://www.arcgis.com/sharing/rest/oauth2/authorize" +
+      "__PORTAL_URL__/sharing/rest/oauth2/authorize" +
       "?client_id=" + encodeURIComponent(clientId) +
       "&code_challenge=" + encodeURIComponent(codeChallenge) +
       "&code_challenge_method=S256" +

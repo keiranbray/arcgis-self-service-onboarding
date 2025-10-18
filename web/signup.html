@@ -156,7 +156,7 @@ calcite-card {
 
 
       try {
-        const resp = await fetch("https://create-user-api-afbag0hgagazdbb3.australiasoutheast-01.azurewebsites.net/api/signup", {
+        const resp = await fetch("/api/signup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, password, email, given_name, family_name, globalid })
