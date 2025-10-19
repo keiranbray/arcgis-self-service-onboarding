@@ -96,4 +96,5 @@ We also need to add the following environment variables into azure static web ap
 - Optionally add the user type and role id that users using the create user workflow will be assigned.
 
 - Take the globalid from the row you want to use and add it as the "id" parameter after your url. Right click the browser and click create qr code.
+  `https://<your-app>.azurestaticwebsites.net/?id=<globalid>`
 - Send out the qr code!
