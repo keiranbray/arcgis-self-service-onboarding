@@ -102,37 +102,40 @@ calcite-card {
   // build everything once DOM is ready
   document.addEventListener("DOMContentLoaded", async () => {
     const codeVerifier = generateRandomString();
-    localStorage.setItem("pkce_verifier", codeVerifier); // save for later
     const codeChallenge = await challengeFromVerifier(codeVerifier);
-
-    const authorizationEndpoint =
-      "__PORTAL_URL__/sharing/rest/oauth2/authorize" +
-      "?client_id=" + encodeURIComponent(clientId) +
-      "&code_challenge=" + encodeURIComponent(codeChallenge) +
-      "&code_challenge_method=S256" +
-      "&redirect_uri=" + encodeURIComponent(redirectUri) +
-      "&response_type=code" +
-      "&expiration=20160";
-
-    const signInButton = document.getElementById("btn-signin");
-    signInButton.addEventListener("click", () => {
-      window.location.href=authorizationEndpoint
-    });
-
-    const signUpButton = document.getElementById("btn-signup");
 
     const params = new URLSearchParams(window.location.search)
     const globalid = params.get("id")
 
-    signUpButton.addEventListener("click", () => {
-      window.location.href = "signup.html?id="+globalid
-    })
+    const signInButton = document.getElementById("btn-signin");
+    const signUpButton = document.getElementById("btn-signup");
+
     if (globalid === null || globalid.length !== 36){
       showMessage("Invalid app id in url", "danger")
       signInButton.disabled = true
       signUpButton.disabled = true
     }
-    localStorage.setItem("globalid", globalid); // save for later
+
+    signInButton.addEventListener("click", () => {
+      localStorage.setItem("globalid", globalid); // save for later
+      localStorage.setItem("pkce_verifier", codeVerifier); // save for later
+      const authorizationEndpoint =
+        "__PORTAL_URL__/sharing/rest/oauth2/authorize" +
+        "?client_id=" + encodeURIComponent(clientId) +
+        "&code_challenge=" + encodeURIComponent(codeChallenge) +
+        "&code_challenge_method=S256" +
+        "&redirect_uri=" + encodeURIComponent(redirectUri) +
+        "&response_type=code" +
+        "&expiration=20160";
+
+      window.location.href=authorizationEndpoint
+    });
+
+    signUpButton.addEventListener("click", () => {
+      window.location.href = "signup.html?id="+globalid
+    })
+
+    
 
   });
 
