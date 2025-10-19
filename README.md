@@ -87,7 +87,7 @@ We also need to add the following environment variables into azure static web ap
 |PORTAL_URL | this is the full url i.e. https://www.arcgis.com or https://maps.example.com/portal. Don't include a forward slash at the end.|
 |MGR_USER | username of user with permissions to create users ("Security and Infrastructure" or "Add user" privileges) and group manager or owner of group users will be added to |
 |MGR_PWORD | password of above user|
-|CONFIG_LAYER_ID | id of config table in your portal|
+|CONFIG_LAYER_ID | item id of config table in your portal|
 
 > Note: The password is stored in a way that can be made visible to anyone with access to the resource in Azure. The repo will be updated to use Azure Key Vault instead in the near future.
 
