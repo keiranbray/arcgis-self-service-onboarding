@@ -35,7 +35,7 @@ For the redirect url, get the url to your static web app (as deployed above) and
 
 ### Github (or other hosting service)
 
-In the index.html page there are some placeholders ``__CALLBACK_URL__`, `__PORTAL_URL__` and `__CLIENT_ID__`. You can either manually replace these or setup the 
+In the index.html page there are some placeholders `__CALLBACK_URL__`, `__PORTAL_URL__` and `__CLIENT_ID__`. You can either manually replace these or setup the 
 Github actions to replace them for you based on repository-level environment variables you set.
 
 If you decide to include the string replacement in your pipeline build, Set up environment variables for your repo. For `Github` the workflow is as follows:
