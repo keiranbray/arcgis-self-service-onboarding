@@ -1,199 +1,199 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Sign Up</title>
-  <!-- Load Calcite Components -->
-  <script type="module" src="https://js.arcgis.com/calcite-components/2.10.0/calcite.esm.js"></script>
-  <link rel="stylesheet" href="https://js.arcgis.com/calcite-components/2.10.0/calcite.css" />
-<style>
-  /* Make the main container flexible */
-main {
-  display: flex;
-  justify-content: center;
-  padding: 2rem;
-}
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Sign Up</title>
+    <!-- Load Calcite Components -->
+    <script type="module" src="https://js.arcgis.com/calcite-components/2.10.0/calcite.esm.js"></script>
+    <link rel="stylesheet" href="https://js.arcgis.com/calcite-components/2.10.0/calcite.css" />
+    <style>
+      /* Make the main container flexible */
+    main {
+      display: flex;
+      justify-content: center;
+      padding: 2rem;
+    }
 
-/* Make the card responsive */
-calcite-card {
-  max-width: 400px;   /* limits width on desktop */
-  width: 100%;        /* full width on mobile */
-}
+    /* Make the card responsive */
+    calcite-card {
+      max-width: 400px;   /* limits width on desktop */
+      width: 100%;        /* full width on mobile */
+    }
 
-/* Adjust font sizes on small screens */
-@media (max-width: 480px) {
-  h1 {
-    font-size: 1.5rem;
-  }
-
-  calcite-input,
-  calcite-button {
-    font-size: 0.9rem;
-  }
-
-  form {
-    padding: 1rem;
-  }
-}
-
-/* Optional: stack elements with spacing for very small screens */
-@media (max-width: 360px) {
-  form calcite-label {
-    margin-bottom: 0.75rem;
-  }
-
-  calcite-button {
-    padding: 0.6rem;
-  }
-}
-
-</style>
-</head>
-<body>
-  <main style="display:flex; justify-content:center; padding:2rem;">
-    <calcite-card style="max-width:400px; width:100%;">
-      <h1 style="text-align:center; margin-bottom:1rem;">Sign Up</h1>
-
-      <form id="signupForm">
-
-        <calcite-label>
-          Given Name
-          <calcite-input id="firstname" required></calcite-input>
-        </calcite-label>
-
-        <calcite-label>
-          Family Name
-          <calcite-input id="lastname" required></calcite-input>
-        </calcite-label>
-
-        <calcite-label>
-          Email
-          <calcite-input id="email" type="email" required></calcite-input>
-        </calcite-label>
-
-        <calcite-label>
-          Username
-          <calcite-input id="username" required=true></calcite-input>
-        </calcite-label>
-
-        <calcite-label>
-          Password
-          <calcite-input id="password" type="password" required></calcite-input>
-        </calcite-label>
-
-        <calcite-label>
-          Confirm Password
-          <calcite-input id="password2" type="password" required></calcite-input>
-        </calcite-label>
-
-
-
-        <calcite-button id="submitBtn" type="submit" width="full" scale="l" style="margin-top:1rem;">
-          Sign up
-        </calcite-button>
-      </form>
-
-      <calcite-notice id="message" width="full" open style="display:none; margin-top:1rem;">
-        <div slot="message"></div>
-      </calcite-notice>
-    </calcite-card>
-  </main>
-
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const globalid = params.get("id");
-
-    const form = document.getElementById("signupForm");
-    const message = document.getElementById("message");
-
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      // Get the button
-      const btn = document.getElementById("submitBtn");
-      // Disable the button
-      btn.disabled = true;
-      // Change the text
-      btn.textContent = "Processing...";
-
-      const username = document.getElementById("username").value;
-      const password = document.getElementById("password").value;
-      const password2 = document.getElementById("password2").value;
-      const email = document.getElementById("email").value;
-      const given_name = document.getElementById("firstname").value;
-      const family_name = document.getElementById("lastname").value;
-
-      if (password !== password2) {
-        showMessage("Passwords do not match.", "danger");
-        btn.textContent = "Sign up";
-        btn.disabled = false;
-        return;
+    /* Adjust font sizes on small screens */
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.5rem;
       }
 
-      else if (!isValidPassword(password)) {
-        showMessage("Passwords must have 12 characters including at least 1 uppercase, lowercase, number and symbol.", "danger");
-        btn.textContent = "Sign up";
-        btn.disabled = false;
-        return;
-      } 
-
-      else if (!globalid){
-        showMessage("No app id specified in url.", "danger");
-        return;
+      calcite-input,
+      calcite-button {
+        font-size: 0.9rem;
       }
 
-      else if (!isValidEmail(email)) {
-        showMessage("Email address doesn't appear to be correct", "danger");
-        btn.textContent = "Sign up";
-        btn.disabled = false;
-        return;
+      form {
+        padding: 1rem;
+      }
+    }
+
+    /* Optional: stack elements with spacing for very small screens */
+    @media (max-width: 360px) {
+      form calcite-label {
+        margin-bottom: 0.75rem;
       }
 
-      else {
-        showMessage("Inputs are valid", "info")
+      calcite-button {
+        padding: 0.6rem;
       }
+    }
+
+    </style>
+  </head>
+  <body>
+    <main style="display:flex; justify-content:center; padding:2rem;">
+      <calcite-card style="max-width:400px; width:100%;">
+        <h1 style="text-align:center; margin-bottom:1rem;">Sign Up</h1>
+
+        <form id="signupForm">
+
+          <calcite-label>
+            Given Name
+            <calcite-input id="firstname" required></calcite-input>
+          </calcite-label>
+
+          <calcite-label>
+            Family Name
+            <calcite-input id="lastname" required></calcite-input>
+          </calcite-label>
+
+          <calcite-label>
+            Email
+            <calcite-input id="email" type="email" required></calcite-input>
+          </calcite-label>
+
+          <calcite-label>
+            Username
+            <calcite-input id="username" required=true></calcite-input>
+          </calcite-label>
+
+          <calcite-label>
+            Password
+            <calcite-input id="password" type="password" required></calcite-input>
+          </calcite-label>
+
+          <calcite-label>
+            Confirm Password
+            <calcite-input id="password2" type="password" required></calcite-input>
+          </calcite-label>
 
 
-      try {
-        const resp = await fetch("/api/signup", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password, email, given_name, family_name, globalid })
-        });
 
-        const data = await resp.json();
+          <calcite-button id="submitBtn" type="submit" width="full" scale="l" style="margin-top:1rem;">
+            Sign up
+          </calcite-button>
+        </form>
 
-        if (resp.ok) {
-          window.location.href = data.redirect_uri;  // ✅ redirect on success
-        } else {
-          showMessage(data.message || "Error signing up", "danger");
+        <calcite-notice id="message" width="full" open style="display:none; margin-top:1rem;">
+          <div slot="message"></div>
+        </calcite-notice>
+      </calcite-card>
+    </main>
+
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const globalid = params.get("id");
+
+      const form = document.getElementById("signupForm");
+      const message = document.getElementById("message");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        // Get the button
+        const btn = document.getElementById("submitBtn");
+        // Disable the button
+        btn.disabled = true;
+        // Change the text
+        btn.textContent = "Processing...";
+
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const password2 = document.getElementById("password2").value;
+        const email = document.getElementById("email").value;
+        const given_name = document.getElementById("firstname").value;
+        const family_name = document.getElementById("lastname").value;
+
+        if (password !== password2) {
+          showMessage("Passwords do not match.", "danger");
+          btn.textContent = "Sign up";
+          btn.disabled = false;
+          return;
         }
-      } catch (err) {
-        showMessage("Network error: " + err.message, "danger");
+
+        else if (!isValidPassword(password)) {
+          showMessage("Passwords must have 12 characters including at least 1 uppercase, lowercase, number and symbol.", "danger");
+          btn.textContent = "Sign up";
+          btn.disabled = false;
+          return;
+        } 
+
+        else if (!globalid){
+          showMessage("No app id specified in url.", "danger");
+          return;
+        }
+
+        else if (!isValidEmail(email)) {
+          showMessage("Email address doesn't appear to be correct", "danger");
+          btn.textContent = "Sign up";
+          btn.disabled = false;
+          return;
+        }
+
+        else {
+          showMessage("Inputs are valid", "info")
+        }
+
+
+        try {
+          const resp = await fetch("/api/signup", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password, email, given_name, family_name, globalid })
+          });
+
+          const data = await resp.json();
+
+          if (resp.ok) {
+            window.location.href = data.redirect_uri;  // ✅ redirect on success
+          } else {
+            showMessage(data.message || "Error signing up", "danger");
+          }
+        } catch (err) {
+          showMessage("Network error: " + err.message, "danger");
+        }
+        btn.textContent = "Sign up";
+        btn.disabled = false;
+      });
+
+      function showMessage(text, kind) {
+        message.style.display = "block";
+        message.kind = kind; // "success", "danger", "info", etc.
+        message.querySelector("[slot=message]").innerText = text;
       }
-      btn.textContent = "Sign up";
-      btn.disabled = false;
-    });
 
-    function showMessage(text, kind) {
-      message.style.display = "block";
-      message.kind = kind; // "success", "danger", "info", etc.
-      message.querySelector("[slot=message]").innerText = text;
-    }
+      function isValidEmail(email) {
+        // Very basic: some text, an @, some text, a dot, some text
+        const regex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+        return regex.test(email);
+      }
 
-    function isValidEmail(email) {
-      // Very basic: some text, an @, some text, a dot, some text
-      const regex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
-      return regex.test(email);
-    }
+      function isValidPassword(password) {
+        // At least 12 chars, contains lowercase, uppercase, number, and symbol
+        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{12,}$/;
+        return regex.test(password);
+      }
 
-    function isValidPassword(password) {
-      // At least 12 chars, contains lowercase, uppercase, number, and symbol
-      const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{12,}$/;
-      return regex.test(password);
-    }
-
-  </script>
-</body>
+    </script>
+  </body>
 </html>
