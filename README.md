@@ -12,7 +12,7 @@ If configured, it also allows users to sign up for an account in the configured 
 ### Azure static web app
 
 - Go to portal.azure.com
-- Go to static web apps and Create
+- Go to static web apps and Create. The free tier is fine.
 - Give your static web app a name (reference the portal/agol you are creating it for) 
 and assign it to a resource group (used to group resources together in billing reports)
 - Under Source, select the github repo you forked above
@@ -78,7 +78,7 @@ Add the following code to the yaml file under .github\workflows (see example in 
 ```
 
 ### Azure
-We also need to add the following environment variables into azure static web apps
+We also need to add the following environment variables into azure static web apps so that the python function has the correct information
 
 | Variable name | Purpose |
 |---------------|---------|
@@ -91,10 +91,11 @@ We also need to add the following environment variables into azure static web ap
 
 
 ## Usage
-- Add a row into the config table.
-- Enter the group id you want users to be automatically added to, and the url they should be redirected to on sign in
-- Optionally add the user type and role id that users using the create user workflow will be assigned.
+- In ArcGIS, add a row into the config table.
+- Enter the group id you want users to be automatically added to, and the redirect url they should be redirected to on sign in
+- Optionally add the user type and role id. If you include these, it will allow users to auto-signup with new accounts, and they will be assigned this type & role.
 
-- Take the globalid from the row you want to use and add it as the "id" parameter after your url. Right click the browser and click create qr code.
+- Take the globalid from the row you want to use and add it as the "id" parameter after your url. The url will look like this:
   `https://<your-app>.azurestaticwebsites.net/?id=<globalid>`
+- Right click the browser and click create qr code.
 - Send out the qr code!
