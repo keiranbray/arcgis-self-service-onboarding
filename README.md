@@ -103,7 +103,7 @@ Make sure the MGR_USER specified above is a group owner or manager, and if you e
     for role in rolesList:
       print(f"{role.name} - {role.id})
 
-![Config table](https://github.com/hansonwj/arcgis-alternative-signin-web/docs/config-table.png)
+![Config table](https://github.com/hansonwj/arcgis-alternative-signin-web/blob/main/docs/config-table.png)
 
 - Copy the globalid from the row you want to create a QR code for and add it as the "id" parameter after your Static Web App URL. The url will look like this:
   `https://<your-app>.azurestaticwebsites.net/?id=<globalid>`
@@ -114,4 +114,4 @@ Make sure the MGR_USER specified above is a group owner or manager, and if you e
 
 The user will scan the QR code then select "Sign in" or "Sign up" to either provide access through their existing account, or create a new account. The Sign In workflow is shown below.
 
-![User onboarding video](https://github.com/hansonwj/arcgis-alternative-signin-web/docs/arcgis-user-onboarding.gif)
+![User onboarding video](https://github.com/hansonwj/arcgis-alternative-signin-web/blob/main/docs/arcgis-user-onboarding.gif)
