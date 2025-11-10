@@ -1,102 +1,117 @@
 # arcgis-alternative-signin-web
 
-This app allows ArcGIS administrators and power users to create QR codes which, when scanned,
-add a user to a group and automatically redirects the user to a specified app.
+This repository shows how you can quickly set up a Static Web App in Microsoft Azure which provides a
+self-service interface for users to onboard themselves into an ArcGIS Online or ArcGIS Enterprise group.
+The app helps to remove the reliance on ArcGIS Administrators and Group Managers in time-critical situations,
+freeing them up from creating users and adding them into groups and allowing them to focus on higher-value activities.
 
-If configured, it also allows users to sign up for an account in the configured organisation.
+Once configured, the user can:
+1. Scan a QR code or navigate to a pre-specified URL
+2. Sign in with their ArcGIS credentials (or choose to create a new account, if enabled)
+3. Be automatically added to a pre-specified group, providing permissions to access the resource
+4. Be redirected to the pre-specified app or URL.
+
+If configured, the app can also allow users to sign up for their own ArcGIS Online account within the Organisation
+who have deployed the app. Each QR code can be configured with a different default User Type and Role, meaning that
+the app owner can configure what permissions will be applied when users create their own accounts.
+
+Multiple QR codes can be active at the same time, meaning that the app owner can provide different URLs/QR Codes to 
+different groups of people depending on their access requirements. Disabling a QR code from future use is as simple as 
+removing a record from an ArcGIS Hosted Feature Layer.
+
+The sign-in process works whether the user is in the same ArcGIS Online Organisation or a different ArcGIS Online Organisation
+as the deployed App.
 
 ## Setup
 
 1. Fork this repo into Github, Azure Devops or another git repository hosting service
 
-### Azure static web app
+### Azure Static Web App
 
-- Go to portal.azure.com
-- Go to static web apps and Create. The free tier is fine.
-- Give your static web app a name (reference the portal/agol you are creating it for) 
+First, we will create the Static Web App (the website which users will use for the self-service onboarding).
+
+1. Go to portal.azure.com
+2. Navigate to Static Web Apps and select Create. The free tier is sufficient.
+3. Give your static web app a name (best practice is to reference the portal/agol you are creating it for) 
 and assign it to a resource group (used to group resources together in billing reports)
-- Under Source, select the github repo you forked above
-- Under app location enter `./web`
-- Under api location enter `./api`
-- Leave output location as `.`
+4. Under Source, select the git repository you forked above
+5. Under app location enter `./web`
+6. Under api location enter `./api`
+7. Leave output location as `.`
 
-- Deploy the static web app.
-- Note the URL in the top right of the overview page, you will use it later
+8. Deploy the static web app.
+- Take a note of the URL in the top right of the overview page, you will use it later.
 
 ### ArcGIS
 
-1. Create an oauth app in the portal/agol you want to associate this app with - follow these steps
-https://developers.arcgis.com/documentation/security-and-authentication/user-authentication/tutorials/create-oauth-credentials-user-auth/
-No specific permissions are required.
-For the redirect url, get the url to your static web app (as deployed above) and add `/callback.html` on the end.
+We now need to configure ArcGIS to recognise the new app, and give it the permissions to manage users on its behalf.
 
-2. Deploy a hosted feature table using the zipped file geodatabase in the repo. This will be the config table used to define the QR codes.
+1. [Create an OAuth App](https://developers.arcgis.com/documentation/security-and-authentication/user-authentication/tutorials/create-oauth-credentials-user-auth/) in the ArcGIS Online Organisation or ArcGIS Enterprise portal you want to associate this app with.
+
+> Note: No specific permissions/privileges are required.
+
+For the redirect url, use the url to your Static Web App that you noted above and add `/callback.html` on the end. It should look like 
+`https://y3r98guef.azurestaticwebsites.net/callback.html`
+
+2. Deploy a Hosted Feature Table using the zipped file geodatabase in the repository (`config_table_template.zip`). This will be where you configure
+the Group and App URL (and optionally the User Type and Role for new users) associated with each QR Code. This Hosted Feature Table must be owned by the same user as the OAuth App above.
+
+### Github (or your chosen git repository hosting service)
+
+We will now configure the website specifically for your ArcGIS Online Organisation or ArcGIS Enterprise Portal. 
+
+In the index.html page there are some placeholders `__CALLBACK_URL__`, `__PORTAL_URL__` and `__CLIENT_ID__`. These need to be replaced with:
+- CALLBACK_URL - as described in the ArcGIS section above
+- CLIENT_ID - OAuth Client ID created in ArcGIS section above
+- PORTAL_URL - this is the full URL to your Portal i.e. https://www.arcgis.com or https://maps.example.com/portal
+
+Simply open the `./web/index.html` file in the editor, find the placeholders above and replace them with the correct details.
 
 
-### Github (or other hosting service)
+### Azure Static Web App
 
-In the index.html page there are some placeholders `__CALLBACK_URL__`, `__PORTAL_URL__` and `__CLIENT_ID__`. You can either manually replace these or setup the 
-Github actions to replace them for you based on repository-level environment variables you set.
-
-If you decide to include the string replacement in your pipeline build, Set up environment variables for your repo. For `Github` the workflow is as follows:
-Under Settings > Secrets and variables > Actions, create an environment (I named mine "prod"). Create three entries under Variables:
-- CALLBACK_URL - as in the arcgis section above
-- CLIENT_ID - oauth client id created in arcgis section above
-- PORTAL_URL - this is the full url i.e. https://www.arcgis.com or https://maps.example.com/portal
-
-Add the following code to the yaml file under .github\workflows (see example in repo)
-
-```
-    environment: prod
-    env:
-      CALLBACK_URL: ${{ vars.CALLBACK_URL }} 
-      CLIENT_ID: ${{ vars.CLIENT_ID }} 
-      PORTAL_URL: ${{ vars.PORTAL_URL }}
-
-    - uses: actions/checkout@v3
-        with:
-          submodules: true
-          lfs: false
-
-    steps:
-      # 🔧 Replace placeholders in index html script
-      - name: Replace CLIENT ID placeholder
-        run: |
-          for file in $(find web -type f -name "*.html"); do
-            sed -i "s|__CLIENT_ID__|${CLIENT_ID}|g" "$file"
-          done
-      - name: Replace CALLBACK URL placeholder
-        run: |
-          for file in $(find web -type f -name "*.html"); do
-            sed -i "s|__CALLBACK_URL__|${CALLBACK_URL}|g" "$file"
-          done
-      - name: Replace PORTAL URL placeholder
-        run: |
-          for file in $(find web -type f -name "*.html"); do
-            sed -i "s|__PORTAL_URL__|${PORTAL_URL}|g" "$file"
-          done
-```
-
-### Azure static web app
-We also need to add the following environment variables into azure static web apps so that the python function has the correct information
+Back in the Azure Static Web App, we also need to add the following environment variables into azure static web apps so that the python function has the correct information
 
 | Variable name | Purpose |
 |---------------|---------|
-|CALLBACK_URL | as in the arcgis section above|
-|CLIENT_ID | oauth client id created in arcgis section above|
-|PORTAL_URL | this is the full url i.e. https://www.arcgis.com or https://maps.example.com/portal. Don't include a forward slash at the end.|
-|MGR_USER | username of user with permissions to create users ("Security and Infrastructure" or "Add user" privileges) and group manager or owner of group users will be added to |
-|MGR_PWORD | password of above user|
-|CONFIG_LAYER_ID | item id of config table in your portal|
+|CALLBACK_URL | As in the ArcGIS section above|
+|CLIENT_ID | OAuth Client ID created in ArcGIS section above|
+|PORTAL_URL | This is the full url i.e. https://www.arcgis.com or https://maps.example.com/portal. Don't include a forward slash at the end.|
+|MGR_USER | Username of the Built-in ArcGIS user with a) permissions to create users ("Security and Infrastructure" or "Add user" privileges in their Role) and b) Group Manager or Owner of the group(s) that users will be added to. |
+|MGR_PWORD | Password of above user|
+|CONFIG_LAYER_ID | Item ID of the 'config' Hosted Feature Table deployed previously|
 
-> Note: The password is stored in a way that can be made visible to anyone with access to the resource in Azure. The repo will be updated to use Azure Key Vault instead in the near future.
+> Note: If you require the enhanced security of storing your credentials in Azure Key Vault, this is possible but will require changes to the code. You will also need to either use a premium-tier Static Web App, or separate the api into an Azure Function as integration with Key Vault is not supported in the free tier of Static Web Apps. Configuring this is outside the scope of this demonstrator app.
+
+## Configuration
+
+This section describes how to generate QR codes which users can scan to be onboarded into groups automatically. You will use the globalid from each row to create a separate QR code.
+
+1. Create the group containing the content you wish to share. 
+
+Make sure the MGR_USER specified above is a group owner or manager, and if you expect external users (from other ArcGIS Online Organisations) to use the QR code, make sure that `Members of any organization` is selected when choosing who can join the group.
+
+2. Create a new record in the config table
+
+- Enter the group_id (the 32-digit ID from the URL when the group is created), and the redirect_uri - the URL to be redirected to once they've signed in
+- Optionally, enter the User Type and Role ID you want new users to be assigned when using the Sign Up option. Leaving these blank will disable sign-up.
+
+> Note: You can find the correct role ID to use using the ArcGIS API for Python
+    from arcgis import GIS
+    gis = GIS("home")
+    rolesList = gis.users.roles.all(max_roles=50)
+    for role in rolesList:
+      print(f"{role.name} - {role.id})
+
+![Config table](https://github.com/hansonwj/arcgis-alternative-signin-web/docs/config-table.png)
+
+- Copy the globalid from the row you want to create a QR code for and add it as the "id" parameter after your Static Web App URL. The url will look like this:
+  `https://<your-app>.azurestaticwebsites.net/?id=<globalid>`
+- Right click the browser window and click Create QR Code.
+- Send out the QR Code!
 
 ## Usage
-- In ArcGIS, add a row into the config table.
-- Enter the group id you want users to be automatically added to, and the redirect url they should be redirected to on sign in
-- Optionally add the user type and role id. If you include these, it will allow users to auto-signup with new accounts, and they will be assigned this type & role.
 
-- Take the globalid from the row you want to use and add it as the "id" parameter after your url. The url will look like this:
-  `https://<your-app>.azurestaticwebsites.net/?id=<globalid>`
-- Right click the browser and click create qr code.
-- Send out the qr code!
+The user will scan the QR code then select "Sign in" or "Sign up" to either provide access through their existing account, or create a new account. The Sign In workflow is shown below.
+
+![User onboarding video](https://github.com/hansonwj/arcgis-alternative-signin-web/docs/arcgis-user-onboarding.gif)
