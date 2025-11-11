@@ -131,7 +131,7 @@ Each QR code is tied to a specific configuration record using the record’s **G
 
       > 💡 **Tip:** Valid User Type IDs can be found [in the REST API documentation](https://developers.arcgis.com/rest/enterprise-administration/portal/create-user/#request-parameters)
 
-   ![Config table](https://github.com/hansonwj/arcgis-alternative-signin-web/blob/main/docs/config-table.png)
+   ![Config table](https://github.com/hansonwj/arcgis-self-service-onboarding/blob/main/docs/config-table.png)
 
 ---
 
@@ -162,4 +162,4 @@ After signing in or signing up, the app will automatically:
 
 The example below shows the **Sign In** workflow in action:
 
-![User onboarding video](https://github.com/hansonwj/arcgis-alternative-signin-web/blob/main/docs/arcgis-user-onboarding.gif)
+![User onboarding video](https://github.com/hansonwj/arcgis-self-service-onboarding/blob/main/docs/arcgis-user-onboarding.gif)
