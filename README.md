@@ -129,6 +129,8 @@ Each QR code is tied to a specific configuration record using the record’s **G
    >     print(f"{role.name} - {role.id}")
    > ```
 
+      > 💡 **Tip:** Valid User Type IDs can be found [in the REST API documentation](https://developers.arcgis.com/rest/enterprise-administration/portal/create-user/#request-parameters)
+
    ![Config table](https://github.com/hansonwj/arcgis-alternative-signin-web/blob/main/docs/config-table.png)
 
 ---
