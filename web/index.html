@@ -70,8 +70,8 @@
 
     <script type="module">
 
-      const clientId = "__CLIENT_ID__";
-      const redirectUri = "__CALLBACK_URL__";
+      const clientId = "g1USQR93RzdudfBQ";
+      const redirectUri = "https://purple-mushroom-03a5e7c10.3.azurestaticapps.net/callback.html;
 
       const dec2hex = (dec) => {
         return ("0" + dec.toString(16)).substr(-2);
@@ -119,7 +119,7 @@
           localStorage.setItem("globalid", globalid); // save for later
           localStorage.setItem("pkce_verifier", codeVerifier); // save for later
           const authorizationEndpoint =
-            "__PORTAL_URL__/sharing/rest/oauth2/authorize" +
+            "https://esriaudefence.maps.arcgis.com/sharing/rest/oauth2/authorize" +
             "?client_id=" + encodeURIComponent(clientId) +
             "&code_challenge=" + encodeURIComponent(codeChallenge) +
             "&code_challenge_method=S256" +
